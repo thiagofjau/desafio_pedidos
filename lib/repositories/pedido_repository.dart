@@ -23,6 +23,10 @@ class PedidoRepository extends GetxController {
 
       // Salva no cache local
       await hiveService.savePedidos(remotePedidos);
+      print('PedidoRepository: Dados salvos no Hive');
+
+      // Verificar dados salvos no Hive
+      await hiveService.printAllPedidos();
 
       return remotePedidos;
     } catch (e) {
@@ -56,6 +60,10 @@ class PedidoRepository extends GetxController {
 
       // Salva no cache local
       await hiveService.savePedido(remotePedido);
+      print('PedidoRepository: Pedido salvo no Hive');
+
+      // Verificar dados salvos no Hive
+      await hiveService.printAllPedidos();
 
       return remotePedido;
     } catch (e) {

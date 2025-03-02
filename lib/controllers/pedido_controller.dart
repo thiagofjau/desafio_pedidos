@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
-
-//ESTE ESTAVA FUNCIONANDO CERTINHO SO FALTOU O SALVA NO HIVE
+import 'package:hive/hive.dart';
 import '../models/pedido.dart';
 import '../repositories/pedido_repository.dart';
 
@@ -40,11 +39,40 @@ class PedidoController extends GetxController {
       isLoading(true);
       errorMessage('');
 
-      var fetchedPedidos = await repository.getPedidos(
-        forceRefresh: forceRefresh,
-      );
-      pedidos.value = fetchedPedidos;
-      filteredPedidos.value = fetchedPedidos;
+      if (forceRefresh) {
+        // Fetch from API
+        var fetchedPedidos = await repository.getPedidos(
+          forceRefresh: forceRefresh,
+        );
+        pedidos.value = fetchedPedidos;
+        filteredPedidos.value = fetchedPedidos;
+
+        // Save to Hive
+        var box = await Hive.openBox<Pedido>('pedidosBox');
+        await box.clear();
+        await box.addAll(fetchedPedidos);
+        print('Dados salvos no Hive');
+      } else {
+        // Load from Hive
+        var box = await Hive.openBox<Pedido>('pedidosBox');
+        if (box.isNotEmpty) {
+          pedidos.value = box.values.toList();
+          filteredPedidos.value = box.values.toList();
+          print('Dados carregados do Hive');
+        } else {
+          // Fetch from API if Hive is empty
+          var fetchedPedidos = await repository.getPedidos(
+            forceRefresh: forceRefresh,
+          );
+          pedidos.value = fetchedPedidos;
+          filteredPedidos.value = fetchedPedidos;
+
+          // Save to Hive
+          await box.clear();
+          await box.addAll(fetchedPedidos);
+          print('Dados salvos no Hive');
+        }
+      }
     } catch (e) {
       errorMessage('Erro ao buscar pedidos: $e');
       print('Erro ao buscar pedidos: $e');
