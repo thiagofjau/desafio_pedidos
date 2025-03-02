@@ -18,7 +18,7 @@ class HomeView extends StatelessWidget {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: verdeEscuro, // Usa a cor definida
+                color: verdeEscuro, 
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -40,34 +40,34 @@ class PedidoController extends GetxController {
       errorMessage('');
 
       if (forceRefresh) {
-        // Fetch from API
+        // Buscar da API
         var fetchedPedidos = await repository.getPedidos(
           forceRefresh: forceRefresh,
         );
         pedidos.value = fetchedPedidos;
         filteredPedidos.value = fetchedPedidos;
 
-        // Save to Hive
+        // Salvar no Hive
         var box = await Hive.openBox<Pedido>('pedidosBox');
         await box.clear();
         await box.addAll(fetchedPedidos);
         print('Dados salvos no Hive');
       } else {
-        // Load from Hive
+        // Carregar do Hive
         var box = await Hive.openBox<Pedido>('pedidosBox');
         if (box.isNotEmpty) {
           pedidos.value = box.values.toList();
           filteredPedidos.value = box.values.toList();
           print('Dados carregados do Hive');
         } else {
-          // Fetch from API if Hive is empty
+          // Buscar da API se o Hive estiver vazio
           var fetchedPedidos = await repository.getPedidos(
             forceRefresh: forceRefresh,
           );
           pedidos.value = fetchedPedidos;
           filteredPedidos.value = fetchedPedidos;
 
-          // Save to Hive
+          // Salvar no Hive
           await box.clear();
           await box.addAll(fetchedPedidos);
           print('Dados salvos no Hive');

@@ -245,13 +245,12 @@ class PedidoRepository extends GetxController {
               (ageRanges[ageRange]!['valorTotal'] as double) +
               pedido.valorTotal;
         } catch (e) {
-          // Ignore errors in date parsing
           print('Erro ao processar data de nascimento: $e');
         }
       }
     }
 
-    // Transform into result list
+    // Transformar em resultado da lista
     final result =
         ageRanges.entries
             .map(
